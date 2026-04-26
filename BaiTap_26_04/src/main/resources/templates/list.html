@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Todo List</title>
+</head>
+<body>
+
+<h2>Danh sách công việc</h2>
+
+<p th:if="${message}" th:text="${message}" style="color:green"></p>
+
+<a href="/todos/create">➕ Thêm mới</a>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Nội dung</th>
+        <th>Ngày</th>
+        <th>Trạng thái</th>
+        <th>Độ ưu tiên</th>
+        <th>Action</th>
+    </tr>
+
+    <tr th:each="t : ${todos}">
+        <td th:text="${t.id}"></td>
+        <td th:text="${t.content}"></td>
+        <td th:text="${t.dueDate}"></td>
+        <td th:text="${t.status}"></td>
+        <td th:text="${t.priority}"></td>
+        <td>
+            <a th:href="@{'/todos/edit/' + ${t.id}}">Sửa</a>
+            |
+            <a th:href="@{'/todos/delete/' + ${t.id}}"
+               onclick="return confirm('Xóa không?')">Xóa</a>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
