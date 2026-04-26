@@ -1,0 +1,41 @@
+package org.example.baptap_25_04.Entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "todos")
+public class Todo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "Không được để trống nội dung")
+    private String content;
+
+    @FutureOrPresent(message = "Ngày phải >= hiện tại")
+    private LocalDate dueDate;
+
+    private String status;
+    private String priority;
+
+    // getter/setter
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+
+    public LocalDate getDueDate() { return dueDate; }
+    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getPriority() { return priority; }
+    public void setPriority(String priority) { this.priority = priority; }
+}
