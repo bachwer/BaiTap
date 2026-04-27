@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{todo.page.title}">Todo List</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 24px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f6f6f6; }
+        .error { color: #c62828; font-size: 0.9rem; }
+        .success { color: #1b5e20; }
+        .danger { color: #c62828; }
+        .toolbar { margin-bottom: 12px; display: flex; gap: 12px; align-items: center; }
+        .form-section { margin-top: 24px; border: 1px solid #ddd; padding: 16px; }
+    </style>
+</head>
+<body>
+<h1 th:text="#{todo.page.heading}">Personal Todo</h1>
+<p>
+    <strong th:text="#{owner.listOf}">Danh sach cua</strong>
+    <span th:text="${ownerName}">Owner</span>
+</p>
+
+<div class="toolbar">
+    <a th:href="@{/todos(lang='vi')}" th:text="#{lang.vi}">VI</a>
+    <a th:href="@{/todos(lang='en')}" th:text="#{lang.en}">EN</a>
+    <form th:action="@{/owner/clear}" method="post">
+        <button type="submit" th:text="#{owner.change}">Change owner</button>
+    </form>
+</div>
+
+<p class="success" th:if="${successMessage}" th:text="${#messages.msg(successMessage)}"></p>
+<p class="danger" th:if="${errorMessage}" th:text="${#messages.msg(errorMessage)}"></p>
+
+<table>
+    <thead>
+    <tr>
+        <th th:text="#{todo.id}">ID</th>
+        <th th:text="#{todo.content}">Content</th>
+        <th th:text="#{todo.dueDate}">Due date</th>
+        <th th:text="#{todo.status}">Status</th>
+        <th th:text="#{todo.priority}">Priority</th>
+        <th th:text="#{todo.actions}">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${#lists.isEmpty(todos)}">
+        <td colspan="6" th:text="#{todo.empty}">No data</td>
+    </tr>
+    <tr th:each="todo : ${todos}">
+        <td th:text="${todo.id}">1</td>
+        <td th:text="${todo.content}">Task</td>
+        <td th:text="${todo.dueDate}">2026-01-01</td>
+        <td th:text="${#messages.msg('todo.status.' + todo.status.name())}">TODO</td>
+        <td th:text="${#messages.msg('todo.priority.' + todo.priority.name())}">MEDIUM</td>
+        <td>
+            <a th:href="@{/todos/{id}/edit(id=${todo.id})}" th:text="#{todo.edit}">Edit</a>
+            <form th:action="@{/todos/{id}/delete(id=${todo.id})}" method="post" style="display:inline;"
+                  onsubmit="return confirmDelete();">
+                <button type="submit" th:text="#{todo.delete}">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="form-section">
+    <h2 th:text="${editMode} ? #{todo.form.editTitle} : #{todo.form.createTitle}">Todo form</h2>
+    <form th:action="@{/todos/save}" th:object="${todoForm}" method="post">
+        <input type="hidden" th:field="*{id}">
+
+        <div>
+            <label for="content" th:text="#{todo.content}">Content</label>
+            <input id="content" type="text" th:field="*{content}">
+            <div class="error" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">Error</div>
+        </div>
+
+        <div>
+            <label for="dueDate" th:text="#{todo.dueDate}">Due date</label>
+            <input id="dueDate" type="date" th:field="*{dueDate}">
+            <div class="error" th:if="${#fields.hasErrors('dueDate')}" th:errors="*{dueDate}">Error</div>
+        </div>
+
+        <div>
+            <label for="status" th:text="#{todo.status}">Status</label>
+            <select id="status" th:field="*{status}">
+                <option th:each="statusOption : ${statuses}" th:value="${statusOption}"
+                        th:text="${#messages.msg('todo.status.' + statusOption.name())}"></option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('status')}" th:errors="*{status}">Error</div>
+        </div>
+
+        <div>
+            <label for="priority" th:text="#{todo.priority}">Priority</label>
+            <select id="priority" th:field="*{priority}">
+                <option th:each="priorityOption : ${priorities}" th:value="${priorityOption}"
+                        th:text="${#messages.msg('todo.priority.' + priorityOption.name())}"></option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}">Error</div>
+        </div>
+
+        <div style="margin-top: 12px;">
+            <button type="submit" th:text="${editMode} ? #{todo.update} : #{todo.add}">Save</button>
+            <a th:if="${editMode}" th:href="@{/todos}" th:text="#{todo.cancel}">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script th:inline="javascript">
+    function confirmDelete() {
+        return confirm(/*[[#{todo.delete.confirm}]]*/ 'Are you sure?');
+    }
+</script>
+</body>
+</html>
+

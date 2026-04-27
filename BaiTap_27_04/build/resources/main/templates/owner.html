@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{owner.title}">Owner</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 24px; }
+        .error { color: #c62828; }
+        .actions { margin-top: 12px; }
+    </style>
+</head>
+<body>
+<h1 th:text="#{owner.heading}">Welcome</h1>
+
+<div>
+    <a th:href="@{/owner(lang='vi')}" th:text="#{lang.vi}">VI</a>
+    |
+    <a th:href="@{/owner(lang='en')}" th:text="#{lang.en}">EN</a>
+</div>
+
+<form th:action="@{/owner}" th:object="${ownerForm}" method="post">
+    <label for="ownerName" th:text="#{owner.name.label}">Owner name</label>
+    <input id="ownerName" type="text" th:field="*{ownerName}"/>
+    <div class="error" th:if="${#fields.hasErrors('ownerName')}" th:errors="*{ownerName}">Error</div>
+
+    <div class="actions">
+        <button type="submit" th:text="#{owner.submit}">Continue</button>
+    </div>
+</form>
+</body>
+</html>
+
